@@ -1,5 +1,11 @@
 # CHANGELOG
 
+### 新增（Leader / Worker 职责边界方案文档，2026-11-15）
+
+- **为什么改**：现有规则只定义了「谁是 Leader、谁是 Worker」（由 cwd 落点决定），没有定义「谁可以写什么」，也没有任何守卫校验仓库归属——越界只能靠自觉，一旦发生，代价落在别人的项目上（改错别人的代码、替别人关闭 Issue、替别人合并 PR）。2026-11-15 的一次真实越界暴露了这个空档。
+- **改了什么**：新增 `LEADER-WORKER-SCOPE.md`（方案稿）——角色与「本家」定义、四类对象 × 动作的边界矩阵、跨项目三条合法通道、工具强制清单（新增 `cross-project-guard` / `scope-policy` / `scope-audit`，改造 `git-commit-guard` / `agent-call` / `worktree-name-guard`）、四类失效形态、落地顺序与验收用例。`AGENTS.md` 的 Leader / Worker 节同步修正为 2026-11-12 的四类目录口径并加本方案指针；`TODO.md` 记 T6 跟踪实施。
+- **回归风险**：无——本次只新增文档与指针，不改任何现有守卫行为。实施时按文档第 8 节顺序做，每步带验收用例。
+
 ### 变更（子项目名称同步：TeamToolkit 更名为 agents-infra，2026-11-11）
 
 - **为什么改**：用户 2026-11-11 决定把名下的 TeamToolkit 更名为 agents-infra——原名字读起来像某个 agent 的专属工具箱，看不出它是全队 17 个 agent 共用的基础设施。本项目 `AGENTS.md` 的子项目清单必须同批改名，否则指向一个已经不用的名字。
