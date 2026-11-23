@@ -46,7 +46,7 @@
 | 打 tag / 发 Release | ✅ | ✅ 名下的 | ❌ | ❌ | — |
 | 给子项目派 Worker（`agent_call` 到子项目） | — | ✅ 名下的 | ❌ | ❌ | — |
 | 求助另一个 Agent（`agent_call` 到它的 Leader） | ✅ 任意 | ✅ | ✅ | ✅ | — |
-| 机器级部署（homebrew 全局包 / launchd / Syncthing / `~/.pi-alt`） | 仅 Kit | 仅 Kit | ❌ | ❌ | — |
+| 机器级部署（homebrew 全局包 / launchd / Syncthing / 全局 git 钩子） | 仅 Kit | 仅 Kit | ❌ | ❌ | — |
 
 三条最关键的收敛：
 
@@ -172,5 +172,5 @@
 ## 九、默认判断（有不同意见直接改）
 
 - **Leader 完全不许改子项目文件**，包括「就一行、顺手」——一律派 Worker。这是唯一能工具强制的划法。
-- **机器级部署统一归 Kit**（homebrew 全局包、launchd、Syncthing、`~/.pi-alt`），各项目只负责自己的构建产物与发布包。
+- **机器级部署统一归 Kit**（homebrew 全局包、launchd、Syncthing、全局 git 钩子），各项目只负责自己的构建产物与发布包。
 - **Issue 关闭权只给 Leader 与用户**，Worker 即使自己建的 Issue 也不关。
