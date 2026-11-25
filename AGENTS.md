@@ -34,11 +34,11 @@
 
 本项目负责的子项目如下（与全局 `~/.pi/agent/docs/agents-registry.md` 的「子项目映射」表保持一致）。
 
-**按 2026-11-08 用户修订的规则：本项目与子项目的 `AGENTS.md`、`.pi/` 完全独立、互不引用**——子项目的 `AGENTS.md` 是它自己的实体文件（本项目是什么 / 归 Kit 负责 / Worker 边界 / 规则索引），`.pi/` 只放它自己的东西；本项目这边也只为 Kit 自己的需要维护规则与工具，不为了「让子项目继承」而维护共享资源。理由：跨仓库路径引用是隐式依赖（本项目改名、子项目单独 clone、换机器都会静默失效），而安全网全在全局 `~/.pi/agent/`、任何目录都会加载。旧做法（软链接 + `settings.json` 路径引用）已废止。
+**按 2026-11-08 用户修订的规则：本项目与子项目的 `AGENTS.md`、`.pi/` 完全独立、互不引用**——子项目的 `AGENTS.md` 是它自己的实体文件（本项目是什么 / 归 Kit 负责 / 会话角色边界 / 规则索引），`.pi/` 只放它自己的东西；本项目这边也只为 Kit 自己的需要维护规则与工具，不为了「让子项目继承」而维护共享资源。理由：跨仓库路径引用是隐式依赖（本项目改名、子项目单独 clone、换机器都会静默失效），而安全网全在全局 `~/.pi/agent/`、任何目录都会加载。旧做法（软链接 + `settings.json` 路径引用）已废止。
 
-**Leader / Worker 分工（2026-11-12 全局规则）**：本项目根目录及其任何 worktree 起的会话是 **Leader**（只做 local main 同步、建 worktree、派任务、收尾）；子项目根 / 子项目 worktree 起的会话是 **Worker**（干具体活并向 Leader 汇报）。`agent_call` / `agent_wake` 的 `dir` 允许四类目录：Agent 项目根、Agent 项目的 git worktree（这两类是 Leader）、已登记子项目根、子项目的 git worktree（这两类是 Worker），启动带 `-a`。子项目专属硬规则写进各自的 `.pi/APPEND_SYSTEM.md`。详见全局 `~/.pi/agent/AGENTS.md`「Leader / Worker 分工」与 `~/.pi/agent/docs/agents-registry.md` 第 5 条。
+**Leader / Worker 分工（2026-11-25 全局规则）**：角色只看两件事——cwd 所在项目 + 当前是否停在 main。**agentLeader** = Agent 项目主工作区的 main 分支（可管本项目 + 名下全部子项目的所有分支与 worktree）；**subLeader** = 子项目主工作区的 main 分支（只管子项目自身）；**Worker** = 任何项目的非 main 分支 worktree（只干当前 worktree 的活，不碰 local main、不建删 worktree、不合并 PR、不发版）。agentLeader 与 subLeader 都可以直接向用户汇报，取决于用户找的是哪个 Leader。`agent_call` / `agent_wake` 的 `dir` 允许四类目录（Agent 项目根 / Agent 项目 worktree / 已登记子项目根 / 子项目 worktree），按目标目录当前分支判角色，启动带 `-a`。子项目专属硬规则写进各自的 `.pi/APPEND_SYSTEM.md`。详见全局 `~/.pi/agent/AGENTS.md`「Leader / Worker 分工」与 `~/.pi/agent/docs/agents-registry.md` 第 5 条。
 
-**谁可以写哪些项目（2026-11-15 方案稿）**：Leader / Worker 只解决了「你是谁」，没解决「你能动谁的东西」。写权边界、Issue 与 PR 的权限归属、跨项目三条合法通道、以及对应的工具强制清单，见本仓库根 `LEADER-WORKER-SCOPE.md`（方案稿，实施后写入全局 `~/.pi/agent/AGENTS.md`）。
+**谁可以写哪些项目（2026-11-25 按角色定权）**：写权由角色决定——agentLeader 可写自身 Agent 项目 + 名下全部子项目的分支 / worktree（main 只做 ff 同步）；subLeader 可写自身项目的分支 / worktree（main 只做 ff 同步）；Worker 只能写当前 worktree；别人的项目只读（要它们变就走求助其 Leader、或在对方仓库建 Issue）。更细的边界（Issue / PR 归属、跨项目三条合法通道、工具强制清单）见本仓库根 `LEADER-WORKER-SCOPE.md`（方案稿，角色定义已按 2026-11-25 更新）。
 
 ### 名册同步职责（2026-10-26 用户立、2026-10-31 修订，硬性规定 + 工具强制）
 

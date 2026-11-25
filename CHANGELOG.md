@@ -1,5 +1,11 @@
 # CHANGELOG
 
+### 变更（Leader / Worker 三级角色重定义，2026-11-25）
+
+- **为什么改**：用户 2026-11-25 要求把全团队的 Leader / Worker 概念再更新一次：原口径（2026-11-12）按「Agent 项目 vs 子项目」分角色，导致「Agent 项目的 worktree 会话也算 Leader、子项目主工作区会话只是 Worker」——前者权限过大、后者连自家 worktree 都不能管。新口径改成按「cwd 所在项目 + 当前是否停在 main」判角色：Agent 项目主工作区 main = **agentLeader**（管自身项目 + 名下全部子项目），子项目主工作区 main = **subLeader**（只管自身项目），任何项目的非 main worktree = **Worker**（只干当前 worktree）。两种 Leader 都可以直接向用户汇报。
+- **改了什么**：本项目 `AGENTS.md` 的「Leader / Worker 分工」整节重写（角色、权限蕴含、local main 只能 ff 同步、任务从 main 拷出 worktree、命名与汇报链路），`LEADER-WORKER-SCOPE.md` 的角色与「本家」表、边界矩阵、派单资格、验收用例同步改为三级角色；`TODO.md` 的 T6 措辞对齐新角色（工具强制落地仍待办）。全局规则与 `docs/agents-registry.md` 已同批更新（agents-infra 镜像发布负责）。
+- **回归风险**：角色权限重新划界——旧口径下在 Agent 项目 worktree 里启动的会话原先可管全项目，现按 Worker 只干当前 worktree；旧口径下子项目主工作区会话原先只是 Worker，现为 subLeader、可建删自家 worktree。工具侧 `agent_call` / `agent_wake` 的目录角色与 `settle-repo-check` 的巡检范围已同批改完（非 main worktree 不再被催项目级收尾）。
+
 ### 变更（取消 pi-alt 双身份，Issue #77；引用同步，2026-11-23）
 
 - **为什么改**：团队 2026-11-23 取消 `pi-alt`（同一 harness 的第二身份），开发路径改由**仓库可见性**判定——公开仓库走 GitHub 服务端（PR + CI + branch protection），私有仓库走本地门禁（`pa-merge.sh` + 全局 git 钩子）。本文件里两处把 `~/.pi-alt` 列为「机器级部署」的内容随之过时。
