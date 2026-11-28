@@ -1,5 +1,11 @@
 # CHANGELOG
 
+### 变更（记录本机卡顿排查结论到 TODO，2026-11-28）
+
+- **为什么改**：用户 2026-11-28 反馈本机卡顿，排查暴露出三个叠加的性能问题（内存耗尽换页抖动、两个 cmux 里的 pi 面板空转烧 CPU、`fseventsd` 97 天累积异常），另有磁盘 90% 满与 pi 渲染层用 `Intl.Segmenter` 无缓存重算宽度的上游性能缺陷。这些处置需要用户授权或输入密码，先入库为待办，避免口头结论流失。
+- **改了什么**：`TODO.md` 新增「本机性能治理（2026-11-28 卡顿排查结论）」子节，含排查数据引用与 T13（重启本机）、T14（关两个空转 pi 面板）、T15（`sudo killall fseventsd`）、T16（清理 `~/.pi/agent/sessions` 1.7GB）四条 🟠 橙色条目，以及 🟡 黄色新节下的 T17（pi 渲染层 `stringWidth()` 缓存优化，需在 pi 上游提 issue / PR）。
+- **回归风险**：无——只新增待办记录，不改任何代码与规则。
+
 ### 变更（Leader / Worker 三级角色重定义，2026-11-25）
 
 - **为什么改**：用户 2026-11-25 要求把全团队的 Leader / Worker 概念再更新一次：原口径（2026-11-12）按「Agent 项目 vs 子项目」分角色，导致「Agent 项目的 worktree 会话也算 Leader、子项目主工作区会话只是 Worker」——前者权限过大、后者连自家 worktree 都不能管。新口径改成按「cwd 所在项目 + 当前是否停在 main」判角色：Agent 项目主工作区 main = **agentLeader**（管自身项目 + 名下全部子项目），子项目主工作区 main = **subLeader**（只管自身项目），任何项目的非 main worktree = **Worker**（只干当前 worktree）。两种 Leader 都可以直接向用户汇报。
